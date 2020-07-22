@@ -1,43 +1,49 @@
 import string
 
-def delete_character(input_, sentences):
-    for i in range(len(input_)):
-        if input_[:i] + input_[i + 1:] in sentences.keys():
-            print("FOR DEBUG: delete sentence")
-            return sentences[input_[:i] + input_[i + 1:]], i
-
-    return None, -1
+# TODO: complete
 
 
-def replace_character(sentence, sentences):
-    result = set()
-    for letter in string.ascii_letters:
-        for character in range(len(sentence)):
-            change_sentence = sentence[:character] + letter + sentence[character + 1:]
-            if change_sentence in sentences.keys():
-                result = result.union(sentences[change_sentence])
-                if len(result) >= 5:
-                    return list(result)[:5]
-    return result
+class Complete:
 
+    def __init__(self, data, len_result=5):
+        self.data = data
+        self.suitable_sentences = set()
+        self.LEN_RESULT = len_result
+        self.__count_sentences = 0
+        self.suitable_complete_sentence = set()
 
-def get_best_k_completions(sentence, data, sentences):
-    # check if the sentence is complete in the data
-    if sentence in sentences.keys():
-        return sentences[sentence]
+    def delete_character(self, input_):
+        for i in range(len(input_)):
+            if input_[:i] + input_[i + 1:] in self.data.sub_sentences.keys():
+                self.suitable_complete_sentence = self.suitable_complete_sentence.union(input_[:i] + input_[i + 1:])
 
-    # else try to delete character
-    set_id_sentences, key = delete_character(sentence, sentences)
-    if set_id_sentences is not None:
-        return set_id_sentences
-    # TODO: check if the answer len = 5
+    def replace_character(self, input_, flag):
+        for letter in string.ascii_letters:
+            for index in range(len(input_)):
+                change_sentence = input_[:index] + letter + input_[index + 1:]
 
-    set_id_sentences = replace_character(sentence, sentences)
-    if len(set_id_sentences) != 0:
-        return set_id_sentences
+                if change_sentence in self.data.sub_sentences.keys():
+                    self.suitable_complete_sentence = self.suitable_complete_sentence.union(self.data.sub_sentences[change_sentence])
 
-    # set_id_sentences = add_character(sentence, sentences)
-    return None
+    def add_character(self, input_):
+        for letter in string.ascii_letters:
+            for character in range(len(input_)):
+                change_sentence = input_[:character] + letter + input_[character:]
+
+                if change_sentence in self.data.sub_sentences.keys():
+                    self.suitable_complete_sentence = self.suitable_complete_sentence.union(self.data.sub_sentences[change_sentence])
+
+    def get_best_k_completions(self, input_):
+        # check if the sentence is complete in the data
+        if input_ in self.data.sub_sentences.keys():
+            self.suitable_sentences = self.data.sub_sentences[input_]
+
+        # else try to change the input
+        self.__count_sentences = len(self.suitable_sentences)
+        if self.__count_sentences < self.LEN_RESULT:
+            self.delete_character(input_)
+            self.replace_character(input_)
+            self.add_character(input_)
 
 
 # class Complete:
