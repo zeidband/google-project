@@ -7,21 +7,23 @@ def start():
     print("Loading the file and preparing the system...")
 
     # sentences = r.init_data(glob.glob("technology_texts/RFC/*.txt"))
-    data = Data(["technology_texts/python-3.8.4-docs-text/python-3.8.4-docs-text/about.txt"])
-    complete = Complete(data)
+    complete = Complete(Data(["technology_texts/python-3.8.4-docs-text/python-3.8.4-docs-text/about.txt"]))
 
-    print("The system is ready. Enter your text: ")
+    print("The system is ready.\n\nEnter your text: ")
 
     sentence = input()
 
     while sentence != '#':
-        complete.get_best_k_completions(sentence)
+        match_sentences = complete.get_best_k_completions(sentence)
 
-        if len(complete.suitable_sentences) != 0:
-            for index in complete.suitable_sentences:
-                print(complete.data.sentences[index])
+        if len(match_sentences) != 0:
+            for sentence in match_sentences:
+                print(sentence.get_complete_sentences() + " - " + str(sentence.get_score()))
 
-        sentence = input("Enter your text: ")
+        else:
+            print("there is no items")
+
+        sentence = input("\n\nEnter your text: ")
 
 
 if __name__ == '__main__':

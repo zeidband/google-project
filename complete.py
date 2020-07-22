@@ -1,67 +1,74 @@
 import string
-
-# TODO: complete
+from auto_complete_data import AutoCompleteData
 
 
 class Complete:
 
     def __init__(self, data, len_result=5):
         self.data = data
-        self.suitable_sentences = set()
         self.LEN_RESULT = len_result
-        self.__count_sentences = 0
-        self.suitable_complete_sentence = set()
+        self.__complete_sentences = []
 
-    def delete_character(self, input_):
-        for i in range(len(input_)):
-            if input_[:i] + input_[i + 1:] in self.data.sub_sentences.keys():
-                self.suitable_complete_sentence = self.suitable_complete_sentence.union(input_[:i] + input_[i + 1:])
+    def get_reduce_points(self, i):
+        return - 10 + 2 * (i - 1) if i < 4 else -2
 
-    def replace_character(self, input_, flag):
-        for letter in string.ascii_letters:
-            for index in range(len(input_)):
-                change_sentence = input_[:index] + letter + input_[index + 1:]
+    def is_exist(self, sentence):
+        for s in self.__complete_sentences:
+            if s.get_complete_sentences() == sentence:
+                return True
+        return False
 
-                if change_sentence in self.data.sub_sentences.keys():
-                    self.suitable_complete_sentence = self.suitable_complete_sentence.union(self.data.sub_sentences[change_sentence])
+    def add_complete_sentence(self, sentence, score):
+        if sentence in self.data.sub_sentences.keys():
 
-    def add_character(self, input_):
-        for letter in string.ascii_letters:
-            for character in range(len(input_)):
-                change_sentence = input_[:character] + letter + input_[character:]
+            for id_ in self.data.sub_sentences[sentence]:
 
-                if change_sentence in self.data.sub_sentences.keys():
-                    self.suitable_complete_sentence = self.suitable_complete_sentence.union(self.data.sub_sentences[change_sentence])
+                if not self.is_exist(self.data.sentences[id_]):
+                    self.__complete_sentences.append(AutoCompleteData(self.data.sentences[id_], score))
+
+                    if len(self.__complete_sentences) == self.LEN_RESULT:
+                        return True
+
+        return False
+
+    def change_input(self, input_):
+        len_ = len(input_)
+
+        for i in range(len_ - 1, -1, -1):
+
+            score = self.get_reduce_points(i)
+
+            for letter in string.ascii_letters:
+
+                if self.add_complete_sentence(input_[:i] + letter + input_[i + 1:], 2 * (len_ - 1) + score // 2):
+                    return
+
+                if self.add_complete_sentence(input_[:i] + letter + input_[i:], 2 * (len_ - 1) + score):
+                    return
+
+            if self.add_complete_sentence(input_[:i] + input_[i + 1:], 2 * (len_ - 1) + score // 2):
+                return
 
     def get_best_k_completions(self, input_):
+        self.__complete_sentences.clear()
         # check if the sentence is complete in the data
-        if input_ in self.data.sub_sentences.keys():
-            self.suitable_sentences = self.data.sub_sentences[input_]
+        if self.add_complete_sentence(input_, 2 * len(input_)):
+            return self.__complete_sentences
 
         # else try to change the input
-        self.__count_sentences = len(self.suitable_sentences)
-        if self.__count_sentences < self.LEN_RESULT:
-            self.delete_character(input_)
-            self.replace_character(input_)
-            self.add_character(input_)
+        self.change_input(input_)
+        return self.__complete_sentences
 
-
-# class Complete:
+    # class Complete:
 #     def __init__(self, init_data, text):
 #         self.initData = init_data
 #         self.txt_input = text
 #         self.suitable_sentence = []
 #         print(self.find_best_complete())
+
 #     def get_complete_by_word(self, key):
 #         return [self.initData.sentence_data[k] for k in self.initData.substringData[key]]
-#     def delete_char(self):
-#         for char in self.txt_input:
-#             if self.txt_input.replace(char, "") in self.initData.substringData:
-#                 self.suitable_sentence += self.get_complete_by_word(self.txt_input.replace(char, ""))
-#     def replace_char(self):
-#
-#     def add_char(self):
-#         pass
+
 #     def find_best_complete(self):
 #         while len(self.suitable_sentence) < 5:
 #             if self.txt_input in self.initData.substringData:

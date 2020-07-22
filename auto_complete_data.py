@@ -14,3 +14,8 @@ class AutoCompleteData:
     def addScore(self, num):
         self.__score += num
 
+    def get_complete_sentences(self):
+        return self.__completed_sentence
+
+    def get_score(self):
+        return self.__score
