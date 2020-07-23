@@ -1,4 +1,3 @@
-import glob
 from complete import Complete
 from read_data import Data
 
@@ -6,7 +5,8 @@ from read_data import Data
 def start():
     print("Loading the file and preparing the system...")
 
-    # sentences = r.init_data(glob.glob("technology_texts/RFC/*.txt"))
+    # file = get_file_list("technology_texts")
+
     complete = Complete(Data(["technology_texts/python-3.8.4-docs-text/python-3.8.4-docs-text/about.txt"]))
 
     print("The system is ready.\n\nEnter your text: ")
