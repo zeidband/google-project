@@ -1,13 +1,21 @@
 from complete import Complete
 from read_data import Data
+import os
 
+def get_file_list(path):
+    file_list = []
+    for root, dirs, files in os.walk(path):
+        for file in files:
+            file_list.append(os.path.join(root, file))
+
+    return file_list
 
 def start():
     print("Loading the file and preparing the system...")
 
-    # file = get_file_list("technology_texts")
-
-    complete = Complete(Data(["technology_texts/python-3.8.4-docs-text/python-3.8.4-docs-text/about.txt"]))
+    files_list = get_file_list("technology_texts")
+    # ["technology_texts/python-3.8.4-docs-text/python-3.8.4-docs-text/about.txt"]
+    complete = Complete(Data(files_list))
 
     print("The system is ready.\n\nEnter your text: ")
 
