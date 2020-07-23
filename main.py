@@ -13,7 +13,7 @@ def get_file_list(path):
 def start():
     print("Loading the file and preparing the system...")
 
-    files_list = get_file_list("technology_texts")
+    files_list = get_file_list("technology_texts/python-3.8.4-docs-text/python-3.8.4-docs-text")
     # ["technology_texts/python-3.8.4-docs-text/python-3.8.4-docs-text/about.txt"]
     complete = Complete(Data(files_list))
 
@@ -26,8 +26,7 @@ def start():
 
         if len(match_sentences) != 0:
             for sentence in match_sentences:
-                print(sentence.get_complete_sentences() + " - " + str(sentence.get_score()))
-
+                print(f"{sentence.completed_sentence} ({files_list[sentence.source_text]} {sentence.offset})")
         else:
             print("there is no items")
 

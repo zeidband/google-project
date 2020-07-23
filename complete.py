@@ -14,7 +14,7 @@ class Complete:
 
     def is_exist(self, sentence):
         for s in self.__complete_sentences:
-            if s.get_complete_sentences() == sentence:
+            if s.completed_sentence == sentence:
                 return True
         return False
 
@@ -23,8 +23,8 @@ class Complete:
 
             for id_ in self.data.sub_sentences[sentence]:
 
-                if not self.is_exist(self.data.sentences[id_]):
-                    self.__complete_sentences.append(AutoCompleteData(self.data.sentences[id_], score))
+                if not self.is_exist(self.data.data[id_][0]):
+                    self.__complete_sentences.append(AutoCompleteData(self.data.data[id_][0], self.data.data[id_][1], self.data.data[id_][2], score))
 
                     if len(self.__complete_sentences) == self.LEN_RESULT:
                         return True
