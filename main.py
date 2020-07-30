@@ -1,7 +1,6 @@
 from complete import Complete
 from read_data import Data
 import os
-import string
 
 def get_file_list(path):
     file_list = []
@@ -12,35 +11,26 @@ def get_file_list(path):
     return file_list
 
 def start():
-    print("Loading the files and preparing the system...")
+    print("Loading the file and preparing the system...")
 
-    files_list = get_file_list("technology_texts/python-3.8.4-docs-text/python-3.8.4-docs-text/c-api")
-    # files_list = get_file_list("technology_texts/python-3.8.4-docs-text/python-3.8.4-docs-text/whatsnew")
+    files_list = get_file_list("technology_texts/python-3.8.4-docs-text/python-3.8.4-docs-text")
+    # ["technology_texts/python-3.8.4-docs-text/python-3.8.4-docs-text/about.txt"]
     complete = Complete(Data(files_list))
 
-    # complete = Complete(Data(["technology_texts/python-3.8.4-docs-text/python-3.8.4-docs-text/about.txt"]))
+    print("The system is ready.\n\nEnter your text: ")
 
-    print("The system is ready.")
+    sentence = input()
 
-    input_ = ' '.join((''.join(i for i in input("\n\nEnter your text: ") if i in string.ascii_letters + ' ')).split())
+    while sentence != '#':
+        match_sentences = complete.get_best_k_completions(sentence)
 
-    while(1):
-        text = " "
+        if len(match_sentences) != 0:
+            for sentence in match_sentences:
+                print(f"{sentence.completed_sentence} ({files_list[sentence.source_text]} {sentence.offset})")
+        else:
+            print("there is no items")
 
-        while text[-1] != '#':
-            match_sentences = complete.get_best_k_completions(input_)
-
-            if len(match_sentences) != 0:
-                for sentence in match_sentences:
-                    print(f"{sentence.completed_sentence} ({files_list[sentence.source_text]} {sentence.offset})")
-            else:
-                print("there is no items")
-
-            # print(input_, end="")
-            text = input(input_)
-            input_ += ' '.join((''.join(i for i in text if i in string.ascii_letters + ' ')).split())
-
-        input_ = ' '.join((''.join(i for i in input("\n\nEnter your text: ") if i in string.ascii_letters + ' ')).split())
+        sentence = input("\n\nEnter your text: ")
 
 
 if __name__ == '__main__':
